@@ -19,7 +19,7 @@ app.factory('socket', function ($rootScope) {
             callback.apply(socket, args);
           }
         });
-      })
+      });
     }
   };
 });
@@ -39,11 +39,11 @@ app.controller('DrawingController', ['$scope', function($scope){
 	
 	$scope.getCursorX = function(){
 		return $scope.cursorX - ($scope.size/2);
-	}
+	};
 	
 	$scope.getCursorY = function(){
 		return $scope.cursorY - ($scope.size/2);
-	}
+	};
 }]);
 
 app.directive('keyboard',function(){
@@ -100,7 +100,7 @@ app.directive('keyboard',function(){
 					break;
 			}
 		});
-	}
+	};
 });
 app.directive('drawing', function(){
 	
@@ -149,7 +149,7 @@ app.directive('drawing', function(){
 				.attr("stroke-width", scope.size)
 				.attr("stroke", scope.color);
 		}
-	}
+	};
 });
 
 app.directive('controls', function() {
