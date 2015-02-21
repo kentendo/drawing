@@ -33,8 +33,8 @@ app.controller('DrawingController', ['$scope', function($scope){
 	$scope.increment = 5;
 	$scope.maxSize = 500;
 	$scope.minSize = 1;
-	$scope.cursorX - 0;
-	$scope.cursorY - 0;
+	$scope.cursorX = 0;
+	$scope.cursorY = 0;
 	$scope.svg = d3.select(document.getElementById('svg'));
 	
 	$scope.getCursorX = function(){
@@ -102,9 +102,9 @@ app.directive('keyboard',function(){
 		});
 	};
 });
-app.directive('drawing', function(){
+app.directive('drawing', ['socket', function(socket){
 	
-	return function (scope, element, attr) {		
+	return function (scope, element, attr) {
 		var lastX;
 		var lastY;
 			
@@ -122,8 +122,10 @@ app.directive('drawing', function(){
 		
 		element.on('mousemove', function() {
 			// do some drawing
-			if (scope.drawing) {				
-				draw(lastX, lastY, event.layerX, event.layerY);
+			if (scope.drawing) {
+				var data = {x1:lastX, y1:lastY, x2:event.layerX, y2:event.layerY, color:scope.color, size:scope.size};
+				draw(data);
+				socket.emit('data', data);
 				lastX = event.layerX;
 				lastY = event.layerY;
 			}
@@ -138,19 +140,25 @@ app.directive('drawing', function(){
 			scope.$apply();
 		});
 		
-		function draw(x1, y1, x2, y2) {		
+		socket.on('data', function(data){
+			
+			draw(data);
+			
+		});
+		
+		function draw(data) {		
 			scope.svg.append('line')
 				.attr("data-id", 8)
-				.attr("x1", x1)
-				.attr("y1", y1)
-				.attr("x2", x2)
-				.attr("y2", y2)
+				.attr("x1", data.x1)
+				.attr("y1", data.y1)
+				.attr("x2", data.x2)
+				.attr("y2", data.y2)
 				.attr("stroke-linecap", "round")
-				.attr("stroke-width", scope.size)
-				.attr("stroke", scope.color);
+				.attr("stroke-width", data.size)
+				.attr("stroke", data.color);
 		}
 	};
-});
+}]);
 
 app.directive('controls', function() {
   return {
