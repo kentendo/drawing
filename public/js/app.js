@@ -25,8 +25,8 @@ app.factory('socket', function ($rootScope) {
 });
 
 app.controller('DrawingController', ['$scope', function($scope){
-	$scope.debug = false;
-	$scope.controls = false;
+	$scope.showDebug = false;
+	$scope.showControls = false;
 	$scope.drawing = false;
 	$scope.size = 11;
 	$scope.color = "#4bf";
@@ -50,9 +50,7 @@ app.directive('keyboard',function(){
 	return function (scope, element, attr) {
 	
 		element.on('keydown', function(e){
-			
-			console.log(e);
-			
+
 			switch(e.keyCode) {
 				case 27: // escape - clear svg
 					if(e.shiftKey) {
@@ -78,8 +76,8 @@ app.directive('keyboard',function(){
 					if(e.shiftKey)
 					{
 						 event.preventDefault();
-						// toggle debug
-						scope.controls = (scope.controls) ? false : true;
+						// toggle showControls
+						scope.showControls = (scope.showControls) ? false : true;
 						scope.$apply();
 					}
 					break;
@@ -87,8 +85,8 @@ app.directive('keyboard',function(){
 					if(e.shiftKey)
 					{
 						 event.preventDefault();
-						// toggle debug
-						scope.debug = (scope.debug) ? false : true;
+						// toggle showDebug
+						scope.showDebug = (scope.showDebug) ? false : true;
 						scope.$apply();
 					}
 					break;

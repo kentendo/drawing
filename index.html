@@ -5,9 +5,9 @@
     <link rel="stylesheet" href="css/styles.css" type="text/css">
   </head>
   <body ng-controller="DrawingController" keyboard>
-  	<div id="cursor" style="background-color:{{color}}; width:{{size-2}}px; height:{{size-2}}px; top:{{getCursorY()}}px; left:{{getCursorX()}}px " ng-cloak ng-show="cursorX && cursorY"></div>
-  	<div id="debugger" class="animated" ng-show="debug" debugger ng-cloak></div>
-    <div id="controls" class="animated" ng-show="controls" controls ng-cloak></div>
+  	<div cursor style="background-color:{{color}}; width:{{size-2}}px; height:{{size-2}}px; top:{{getCursorY()}}px; left:{{getCursorX()}}px " ng-cloak ng-show="cursorX && cursorY"></div>
+  	<div debugger class="animated" ng-show="showDebug" ng-cloak></div>
+    <div controls class="animated" ng-show="showControls" ng-cloak></div>
     <svg id="svg" drawing></svg>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.11/angular.min.js"></script>
