@@ -140,13 +140,23 @@ app.directive('drawing', ['socket', function(socket){
 			scope.$apply();
 		});
 		
-		socket.on('data', function(data){
-			
+		socket.on('data', function(data){			
 			draw(data);
-			
 		});
 		
-		function draw(data) {		
+		socket.on('startup', function(data){
+			console.log(data);
+			if(data != null)
+			{
+				for(var i = 0; i < data.length; i++)
+				{
+					draw(data[i]);
+				}
+			}
+		});
+		
+		function draw(data) {
+			
 			scope.svg.append('line')
 				.attr("data-id", 8)
 				.attr("x1", data.x1)

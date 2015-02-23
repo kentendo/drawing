@@ -4,41 +4,45 @@ var compression = require('compression');
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 
-var mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost/drawing');
+var MongoClient = require('mongodb').MongoClient;
+var url = 'mongodb://localhost:27017/drawing';
 
-var Schema = mongoose.Schema;
-
-
-var db = mongoose.connection;
-db.on('error', console.error.bind(console, 'connection error:'));
-db.once('open', function (callback) {
-  // yay!
-  console.log('connected to drawing db');
-});
+//var Db = require('mongodb').Db;
+//var Server = require('mongodb').Server;
+//var db = new Db('drawing', new Server('localhost', 27017), {safe:true});
 
 app.use(compression());
 app.use(express.static(__dirname + '/public'));
-app.get('/', function(req, res){
-  res.vary('Accept-Encoding');
-  res.sendFile(__dirname + '/index.html');
-  
+app.get('/', function(req, res) {
+	res.vary('Accept-Encoding');
+	res.sendFile(__dirname + '/index.html');
 });
 
-io.on('connection', function(socket){
-	
-	console.log('a user connected');
-	
-	socket.on('disconnect', function(){
+io.on('connection', function(socket) {
+
+	MongoClient.connect(url, function(err, db) {
+		var collection = db.collection("lines");
+		collection.find({timestamp:{$lt:Date.now()}}).toArray(function(err, docs) {
+			io.sockets.connected[socket.id].emit('startup', docs);	
+			db.close();
+		});
+	});
+
+	socket.on('disconnect', function() {
 		console.log('user disconnected');
 	});
-	
-	socket.on('data', function(data){
-    	console.log('data: ' + data);
-    	socket.broadcast.emit('data', data);
+
+	socket.on('data', function(data) {
+		socket.broadcast.emit('data', data);
+		MongoClient.connect(url, function(err, db) {
+			var collection = db.collection("lines");
+			data.timestamp = Date.now();
+			collection.insert(data, {w:1}, function(err, result) {});
+			db.close();
+		});
 	});
 });
 
-http.listen(3000, function(){
-  console.log('listening on *:3000');
+http.listen(3000, function() {
+	console.log('listening on *:3000');
 });
