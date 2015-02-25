@@ -9,12 +9,7 @@
 
 ### How do I get set up? ###
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
+* run npm install
 
 ### Contribution guidelines ###
 
@@ -25,4 +20,4 @@
 ### Who do I talk to? ###
 
 * Repo owner or admin
-* Other community or team contact
+* kenny@kennycosca.com

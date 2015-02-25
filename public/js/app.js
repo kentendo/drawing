@@ -100,6 +100,7 @@ app.directive('keyboard',function(){
 		});
 	};
 });
+
 app.directive('drawing', ['socket', function(socket){
 	
 	return function (scope, element, attr) {
@@ -143,7 +144,6 @@ app.directive('drawing', ['socket', function(socket){
 		});
 		
 		socket.on('startup', function(data){
-			console.log(data);
 			if(data != null)
 			{
 				for(var i = 0; i < data.length; i++)
