@@ -6,7 +6,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var MongoClient = require('mongodb').MongoClient;
 var dbUrl = 'mongodb://localhost:27017/drawing';
-	
+var db;
 
 app.use(compression());
 app.use(express.static(__dirname + '/public'));
@@ -16,31 +16,48 @@ app.get('/', function(req, res) {
 	res.sendFile(__dirname + '/index.html');
 });
 
+// Initialize db and start listening
+MongoClient.connect("mongodb://localhost:27017/drawing", function(err, database) {
+	// TODO
+	// instead of commenting out error, send message to client saying this will not be recorded
+	// but will still be sent to all other users connected
+	
+	if(err) {
+		console.log(err);
+		//throw err;
+	} else {
+		db = database;
+		http.listen(3000, function() {
+			console.log('drawing app started');
+		});
+	}
+});
+
 io.on('connection', function(socket) {
 	
-	MongoClient.connect(dbUrl, function(err, db) {
-		var collection = db.collection("lines");
-		collection.find({timestamp:{$lt:Date.now()}}).toArray(function(err, docs) {
-			io.sockets.connected[socket.id].emit('startup', docs);	
-			db.close();
+	// handle new connection 
+	if(db) {
+		db.collection("lines").find({timestamp:{$lt:Date.now()}}).toArray(function(err, docs) {
+			io.sockets.connected[socket.id].emit('startup', docs);
 		});
-	});
-
+	}
+	
+	// handle disconnect
 	socket.on('disconnect', function() {
-		console.log('user disconnected');
+		// TODO
+		// send message to client saying someone disconnected
 	});
-
+	
+	// handle new data
+	// send it out to everyone and then try and save it
 	socket.on('data', function(data) {
 		socket.broadcast.emit('data', data);
-		MongoClient.connect(dbUrl, function(err, db) {
-			var collection = db.collection("lines");
+		if(db)
+		{
 			data.timestamp = Date.now();
-			collection.insert(data, {w:1}, function(err, result) {});
-			db.close();
-		});
+			db.collection("lines").insert(data, {w:1}, function(err, result) {});
+		}
 	});
 });
 
-http.listen(3000, function() {
-	console.log('listening on *:3000');
-});
+
