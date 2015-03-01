@@ -7,7 +7,7 @@
     <base href="/">
   </head>
   <body ng-controller="DrawingController" keyboard>
-  	<div cursor style="background-color:{{color}}; width:{{getSize()}}px; height:{{getSize()}}px; top:{{doZoom()*getCursorY()}}px; left:{{doZoom()*getCursorX()}}px"></div>
+  	<div cursor style="background-color:{{color}}; width:{{getSize()}}px; height:{{getSize()}}px; top:{{doZoom()*getCursorY()}}px; left:{{doZoom()*getCursorX()}}px " ng-cloak ng-show="cursorX && cursorY"></div>
   	<div debugger ng-show="showDebug" ng-cloak></div>
     <div controls class="controls-show" ng-show="showControls" ng-cloak>
     	<a class="close" onclick="drawing.showControls=false">&times;</a>

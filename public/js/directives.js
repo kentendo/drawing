@@ -59,17 +59,17 @@ function(socket) {
 		var mouseDown;
 		var points = [];
 		
-		element.on('mousedown', function() {
+		element.on('mousedown', function(event) {
 			lastX = event.layerX;
 			lastY = event.layerY;
 			mouseDown = true;
 		});
 
-		element.on('mouseup', function() {
+		element.on('mouseup', function(event) {
 			mouseDown = false;
 		});
 
-		element.on('mousemove', function() {
+		element.on('mousemove', function(event) {
 			// do some drawing
 			if (mouseDown) {
 				var data = {
@@ -92,7 +92,7 @@ function(socket) {
 			scope.$apply();
 		});
 
-		element.on('mouseleave', function() {
+		element.on('mouseleave', function(event) {
 			mouseDown = false;
 		});
 
