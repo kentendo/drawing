@@ -10,14 +10,18 @@
   	<div cursor style="background-color:{{color}}; width:{{getSize()}}px; height:{{getSize()}}px; top:{{doZoom()*getCursorY()}}px; left:{{doZoom()*getCursorX()}}px " ng-cloak ng-show="cursorX && cursorY"></div>
   	<div debugger ng-show="showDebug" ng-cloak></div>
     <div controls class="controls-show" ng-show="showControls" ng-cloak>
-    	<a class="close" onclick="drawing.showControls=false">&times;</a>
+    	<a class="close" ng-click="showControls=false">&times;</a>
     	<div class="control">
     		<p class="label">color</p>
-    		<input colorpicker id="colorpicker" type="color" value="{{color}}"></input>
+    		<input colorpicker id="colorpicker" type="color" ng-model="color"></input>
+    	</div>
+    	<div class="control">
+    		<p class="label">brush</p>
+    		<select brushtype id="brushtype" ng-options="brush as brush for brush in brushes" ng-model="brush"></select>
     	</div>
     	<div class="control">
     		<p class="label">size</p>
-    		<input brushsize id="brushsize" type="range" value="{{size}}" orient="vertical" max="{{maxSize}}" min="{{minSize}}"></input>
+    		<input brushsize id="brushsize" type="range" ng-model="size" orient="vertical" max="{{maxSize}}" min="{{minSize}}"></input>
     		<p>{{size}}px</p>
     	</div>
     </div>
