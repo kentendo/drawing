@@ -6,6 +6,7 @@ body {
 	margin:0;
 	height:100%;
 	overflow:hidden;
+	backgground-color:#000;
 }
 
 svg {
@@ -22,7 +23,7 @@ svg {
 	padding:10px;
 	border-left:1px solid #888;
 	border-bottom:1px solid #888;
-	background-color:#fff;
+	background-color:rgba(255, 255, 255, 0.5);
 }
 
 [cursor] {
@@ -33,13 +34,6 @@ svg {
 	border:1px solid #888;
 }
 
-[colorpicker] {
-	width:50px;
-	height:100%;
-	min-height:100%;
-	background-color:#CCC;
-}
-
 [controls] {
 	position:absolute;
 	z-index:1000;
@@ -47,6 +41,7 @@ svg {
 	height:100%;
 	min-height:100%;
 	background-color:#fff;
+	text-align:center;
 }
 
 .controls-show.ng-hide-add.ng-hide-add-active,
@@ -56,11 +51,35 @@ svg {
 }
 
 .controls-show {
-	width:100px;
+	width:auto;
 }
 
 .controls-show.ng-hide {
 	width:0px;
+}
+
+.control {
+	padding:20px 20px 0;
+}
+
+.control .label {
+	background-color:#000;
+	color:#fff;
+	padding:3px;
+}
+
+#brushsize {
+	-webkit-appearance: slider-vertical;
+	writing-mode: bt-lr;
+	width: 8px;
+    height: 175px;
+}
+
+.close {
+	position:absolute;
+	top:3px;
+	left:3px;
+	cursor: pointer;
 }
 
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {

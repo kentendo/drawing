@@ -1,24 +1,33 @@
-app.controller('SettingsController', ['$scope', function($scope){
-	
-}]);
-
-app.controller('DrawController', ['$scope', function($scope){
-	
-}]);
 
 app.controller('DrawingController', ['$scope', function($scope) {
-	$scope.showDebug = false;
-	$scope.showControls = false;
-	$scope.drawing = false;
+	$scope.showDebug = true;
+	$scope.showControls = true;
 	$scope.size = 11;
-	$scope.color = "#4bf";
-	$scope.increment = 5;
-	$scope.maxSize = 500;
+	$scope.zoom = 100;
+	$scope.maxSize = 300;
 	$scope.minSize = 1;
+	$scope.colors = ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "00FFFF"];
+	$scope.color = $scope.colors[Math.round(Math.random() * ($scope.colors.length-1))];
+	$scope.brush = "round";
 	$scope.cursorX = 0;
 	$scope.cursorY = 0;
-	$scope.svg = d3.select(document.getElementById('svg'));
-
+	$scope.width = window.innerWidth;
+	$scope.height = window.innerHeight;
+	$scope.offsetX = 0;
+	$scope.offsetY = 0;
+	$scope.offsetIncrement = 50;
+	$scope.zoomIncrement = 10;
+	$scope.svg = d3.select(document.getElementById('svg'));	
+	$scope.line = [];
+	
+	$scope.getZoom = function(){
+		return $scope.zoom / 100;
+	};
+	
+	$scope.doZoom = function(){
+		return 100 / $scope.zoom;
+	};
+	
 	$scope.getCursorX = function() {
 		return $scope.cursorX - ($scope.size / 2);
 	};
@@ -27,9 +36,8 @@ app.controller('DrawingController', ['$scope', function($scope) {
 		return $scope.cursorY - ($scope.size / 2);
 	};
 	
-	$scope.drawPicker = function(){
-		var canvas = angular.element('#color-picker');
-		console.log(canvas);
+	$scope.getSize = function(){
+		return $scope.doZoom() * $scope.size;
 	};
 	
 }]);

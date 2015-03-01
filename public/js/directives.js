@@ -1,57 +1,51 @@
+
 app.directive('keyboard', function() {
 	return function(scope, element, attr) {
-
 		element.on('keydown', function(e) {
-
 			switch(e.keyCode) {
 			case 27:
 				// escape - clear svg
 				if (e.shiftKey) {
-					event.preventDefault();
 					if (confirm("Are you sure you want to clear the canvas?"))
 						scope.svg.selectAll("*").remove();
 				}
 				break;
-			case 38:
-				// up - larger size
-				scope.size = Math.min(scope.maxSize, scope.size + scope.increment);
+			case 38: // up
+				if(e.ctrlKey)
+					scope.zoom += scope.zoomIncrement;
+				else 
+					scope.offsetY -= scope.offsetIncrement;
+				break;
+			case 40: // down
+				if(e.ctrlKey)
+					scope.zoom -= scope.zoomIncrement;
+				else 
+					scope.offsetY += scope.offsetIncrement;
+				break;
+			case 39: // right
+				scope.offsetX += scope.offsetIncrement;
+				break;
+			case 37: // left
+				scope.offsetX -= scope.offsetIncrement;
+				break;
+			case 67: // c 
+				// toggle showControls
+				scope.showControls = (scope.showControls) ? false : true;
+				break;
+			case 68: // d
+				// toggle showDebug
+				scope.showDebug = (scope.showDebug) ? false : true;
 				scope.$apply();
 				break;
-			case 40:
-				// down - smaller size
-				scope.size = Math.max(scope.minSize, scope.size - scope.increment);
-				scope.$apply();
-				break;
-			case 39:
-				// right - next tool
-
-				break;
-			case 37:
-				// left - previous tool
-
-				break;
-			case 67:
-				if (e.shiftKey) {
-					event.preventDefault();
-					// toggle showControls
-					scope.showControls = (scope.showControls) ? false : true;
-					scope.$apply();
-				}
-				break;
-			case 68:
-				if (e.shiftKey) {
-					event.preventDefault();
-					// toggle showDebug
-					scope.showDebug = (scope.showDebug) ? false : true;
-					scope.$apply();
-				}
-				break;
-			case 90:
+			case 90: // z
 				if (e.shiftKey) {
 					// undo
 				}
 				break;
 			}
+			
+			event.preventDefault();
+			scope.$apply();
 		});
 	};
 });
@@ -62,27 +56,28 @@ function(socket) {
 	return function(scope, element, attr) {
 		var lastX;
 		var lastY;
-
+		var mouseDown;
+		var points = [];
+		
 		element.on('mousedown', function() {
 			lastX = event.layerX;
 			lastY = event.layerY;
-			scope.drawing = true;
-			scope.$apply();
+			mouseDown = true;
 		});
 
 		element.on('mouseup', function() {
-			scope.drawing = false;
-			scope.$apply();
+			mouseDown = false;
 		});
 
 		element.on('mousemove', function() {
 			// do some drawing
-			if (scope.drawing) {
+			if (mouseDown) {
 				var data = {
-					x1 : lastX,
-					y1 : lastY,
-					x2 : event.layerX,
-					y2 : event.layerY,
+					x1 : lastX + scope.offsetX,
+					y1 : lastY + scope.offsetY,
+					x2 : event.layerX + scope.offsetX,
+					y2 : event.layerY + scope.offsetY,
+					brush : scope.brush,
 					color : scope.color,
 					size : scope.size
 				};
@@ -98,8 +93,7 @@ function(socket) {
 		});
 
 		element.on('mouseleave', function() {
-			scope.drawing = false;
-			scope.$apply();
+			mouseDown = false;
 		});
 
 		socket.on('data', function(data) {
@@ -115,91 +109,33 @@ function(socket) {
 		});
 
 		function draw(data) {
-
-			scope.svg.append('line').attr("data-id", 8).attr("x1", data.x1).attr("y1", data.y1).attr("x2", data.x2).attr("y2", data.y2).attr("stroke-linecap", "round").attr("stroke-width", data.size).attr("stroke", data.color);
+			scope.svg.append('line').attr("data-id", 8).attr("x1", data.x1).attr("y1", data.y1).attr("x2", data.x2).attr("y2", data.y2).attr("stroke-linecap", data.brush).attr("stroke-width", data.size).attr("stroke", data.color);
+			//scope.svg.innerHTML += '<line x1="'+data.x1+'" y1="'+data.y1+'" x2="'+data.x2+'" y2="'+data.y2+'" stroke-linecap="'+data.brush+'" stroke-width="'+data.size+'" stroke="'+data.color+'"></line>';
 		}
 
 	};
 }]);
 
 app.directive('colorpicker', function() {
+	return function(scope, element, attr) {		
+		document.getElementById("colorpicker").value = scope.color;
+		element.on('change', function() {
+			scope.color = element.val();
+		});
+	};
+});
+
+app.directive('brushsize', function() {
 	return function(scope, element, attr) {
-
-		var width = element.width();
-		var height = element.height();
-		var context;
-		var imageData;
-		var pixels;
-				
-		try {
-			
-			width = 5;
-			height = 15;
-			
-			context = element[0].getContext('2d');
-			imageData = context.createImageData(width, height);
-			pixels = imageData.data;
-			
-			console.log(width);
-			console.log(height);
-			console.log(context);
-			console.log(imageData);
-			console.log(pixels);
-			
-			var i = 0;
-			for (y = 0; y < height; y++) {
-				
-				console.log('start row');
-				
-				for (x = 0; x < width; x++, i++) {
-					
-					console.log('pixel: ' + i);
-					console.log('y: ' + y + ' x: ' + x);
-					
-					
-					
-					
-					//pixels[i] = 
-					
-					// console.log('i: ' + i);
-					// console.log('y: ' + y);
-					// console.log('x: ' + x);
-					
-					// rx = x - cx;
-					// ry = y - cy;
-					// d = rx * rx + ry * ry;
-					// if (d < radius * radius) {
-						// hue = 6 * (Math.atan2(ry, rx) + Math.PI) / (2 * Math.PI);
-						// sat = Math.sqrt(d) / radius;
-						// g = Math.floor(hue);
-						// f = hue - g;
-						// u = 255 * (1 - sat);
-						// v = 255 * (1 - sat * f);
-						// w = 255 * (1 - sat * (1 - f));
-						// pixels[i] = [255, v, u, u, w, 255, 255][g];
-						// pixels[i + 1] = [w, 255, 255, v, u, u, w][g];
-						// pixels[i + 2] = [u, u, w, 255, 255, v, u][g];
-						// pixels[i + 3] = 255;
-					// }
-				}
-			}
-			
-			console.log(imageData);
-			
-			context.putImageData(imageData, 0, 0);
-
-		} catch (e) {
-			console.log(e);
-		}
-
-		console.log(width);
-		console.log(height);
-
+		element.on('input', function() {
+			scope.size = element.val();
+			scope.$apply();
+		});
 	};
 });
 
 app.directive('debugger', function() {
 	return {
-		templateUrl : 'debugger.html'
+		templateUrl : 'partials/debugger.html'
 	};
-}); 
+});
