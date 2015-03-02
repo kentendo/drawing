@@ -6,7 +6,7 @@ app.controller('DrawingController', ['$scope', function($scope) {
 	$scope.zoom = 100;
 	$scope.maxSize = 300;
 	$scope.minSize = 1;
-	$scope.colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '00FFFF'];
+	$scope.colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#00FFFF'];
 	$scope.color = $scope.colors[Math.round(Math.random() * ($scope.colors.length-1))];
 	$scope.brushes = ['round', 'butt', 'square'];
 	$scope.brush = "round";
@@ -18,7 +18,7 @@ app.controller('DrawingController', ['$scope', function($scope) {
 	$scope.offsetY = 0;
 	$scope.offsetIncrement = 50;
 	$scope.zoomIncrement = 10;
-	$scope.svg = d3.select(document.getElementById('svg'));	
+	$scope.svg = d3.select(document.getElementById('drawing'));
 	$scope.line = [];
 	
 	$scope.getZoom = function(){
